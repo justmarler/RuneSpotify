@@ -20,10 +20,12 @@ dependencies {
 
 	testImplementation 'junit:junit:4.12'
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
+
+	compile 'se.michaelthelin.spotify:spotify-web-api-java:6.5.1'
 }
 
 group = 'com.example'
-version = '1.0-SNAPSHOT'
+version = '1.4'
 sourceCompatibility = '1.8'
 
 tasks.withType(JavaCompile) {
