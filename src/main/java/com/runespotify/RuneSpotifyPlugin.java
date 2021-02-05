@@ -13,6 +13,12 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import java.security.SecureRandom;
+import java.security.MessageDigest;
+
 @Slf4j
 @PluginDescriptor(
 	name = "RuneSpotify"
@@ -47,11 +53,24 @@ public class RuneSpotifyPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onConfigChanged(ConfigChanged configChanged)
+	public void onConfigChanged(ConfigChanged configChanged) throws NoSuchAlgorithmException
 	{
 		if (configChanged.getGroup().equalsIgnoreCase(RuneSpotifyConfig.GROUP))
 		{
-			log.info(Boolean.toString(config.userAuthentication()));
+			try {
+				SecureRandom sr = new SecureRandom();
+				byte[] code = new byte[32];
+				sr.nextBytes(code);
+				String codeVerifier = Base64.getEncoder().encodeToString(code);
+				byte[] codeVerifierBytes = codeVerifier.getBytes(StandardCharsets.US_ASCII);
+				MessageDigest md = MessageDigest.getInstance("SHA-256");
+				md.update(codeVerifierBytes);
+				byte[] codeChallengeBytes = md.digest();
+				String codeChallenge = Base64.getEncoder().encodeToString(codeChallengeBytes);
+				log.info(codeChallenge);
+			} catch (NoSuchAlgorithmException e) {
+				e.toString();
+			}
 		}
 	}
 
